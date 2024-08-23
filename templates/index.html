@@ -1,0 +1,60 @@
+<h2>DApp Store Money 7</h2>
+
+<input type="number" id="store_number" placeholder="Enter amount to store">
+<button class="btn" onclick="store_value()">Store Money</button>
+<button class="btn" onclick="get_value()">View Money</button>
+<p id="stored_number"></p>
+
+<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+
+<script>
+    //0xf3657f2537f87607b7145989735b1a5d8c150c53
+    const contract_address="0xf3657f2537f87607b7145989735b1a5d8c150c53";
+    const abi=[
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "num",
+                    "type": "uint256"
+                }
+            ],
+            "name": "store_m",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "retrieve_m",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ];
+    
+    const web3 = new Web3(Web3.givenProvider);
+    const contract = new web3.eth.Contract(abi,contract_address);
+
+    async function store_value() {
+        const accounts = await web3.eth.requestAccounts();
+        const value = document.getElementById("store_number").value;
+        console.log(accounts[0]);
+        console.log(value);
+        await contract.methods.store_m(value).send({from:accounts[0]});
+    }
+
+    async function get_value() {
+        const stored_value = await contract.methods.retrieve_m().call()
+        console.log(stored_value)
+        document.getElementById("stored_number").innerText = stored_value;
+    }
+</script>
+
+
